@@ -1,33 +1,20 @@
-.container {
-    width: 50%;
 
-    @media (max-width: 990px) {
-        width: 100%;
+.actionContainer {
+    font-size: 12px;
+    margin-left: 12px;
+    .span {
+        margin-left: 5%
     }
 }
 
-.header {
-    border-bottom: 1px solid #e7e7e7;
+.customerContainer {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 0 12px 12px;
+    margin: 0 12px;
+    width: 100%;
 }
 
-.heading {
-    font-size: 20px;
-}
-
-.closeButton {
-    background-color: #e5e5e5;
-    border-radius: 50%;
-    color: #7d7d7d;
-    height: 20px;
-    margin-top: 4px;
-    text-align: center;
-    width: 20px;
-}
-
-.actionContainer {
-    margin: 24px 12px 12px;
+.customerLabel {
+    align-self: center;
+    display: flex;
 }

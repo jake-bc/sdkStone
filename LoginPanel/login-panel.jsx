@@ -1,10 +1,13 @@
 import React, { Fragment } from 'react';
 import Alert from '../components/Alert/alert';
 import EmailInput from '../components/EmailInput/email-input';
-import Panel from '../components/Panel/panel';
 import PasswordInput from '../components/PasswordInput/password-input';
-import SubmitButton from '../components/SubmitButton/submit-button';
 import styles from './login-panel.scss';
+import Section from '../components/Section/section';
+import CustomerSubmit from '../components/SubmitCustomer/submit-customer';
+import { CheckoutService } from '@bigcommerce/checkout-sdk';
+import Button from '../components/Button/button';
+
 
 export default class LoginPanel extends React.PureComponent {
     constructor(props) {
@@ -12,55 +15,44 @@ export default class LoginPanel extends React.PureComponent {
 
         this.state = {
             email: '',
-            password: '',
+            password: ''
         };
     }
 
     render() {
         return (
-            <div className={ styles.container }>
-                <Panel body={
+            <Section
+                header={'Customer'}
+                body={
                     <Fragment>
-                        <div className={ styles.header }>
-                            <div className={ styles.heading }>
-                                Welcome Back!
-                            </div>
-
-                            <a
-                                onClick={ this.props.onClose }
-                                className={ styles.closeButton }>
-                                &#10005;
-                            </a>
-                        </div>
-
-                        <form onSubmit={ (event) => this._signIn(event) }>
-                            { this.props.errors &&
-                                <Alert body={ this.props.errors.body.detail } />
+                          <div 
+                        onClick={(event) => this._signIn(event)}>
+                            {this.props.errors &&
+                                <Alert body={this.props.errors.body.detail} />
                             }
-
-                            <div>
                                 <EmailInput
-                                    id={ 'customerEmail' }
-                                    label={ 'Email' }
-                                    value={ this.state.email }
-                                    onChange={ ({ target }) => this.setState({ email: target.value }) } />
+                                    id={'customerEmail'}
+                                    label={'Email'}
+                                    value={this.state.email}
+                                    onChange={({ target }) => this.setState({ email: target.value })} />
 
                                 <PasswordInput
-                                    id={ 'customerPassword' }
-                                    label={ 'Password' }
-                                    value={ this.state.password }
-                                    onChange={ ({ target }) => this.setState({ password: target.value }) } />
+                                    id={'customerPassword'}
+                                    label={'Password'}
+                                    value={this.state.password}
+                                    onChange={({ target }) => this.setState({ password: target.value })} />          
+                                    <div className={styles.actionContainer}>
+                                <CustomerSubmit
+                                    label={this.props.isSigningIn ? `Signing in as ${this.state.email}...` : 'Sign In'}
+                                    isLoading={this.props.isSigningIn} />
                             </div>
+                            <span>Don’t have an account? <a 
+                            onSubmit={this.props.onClose}>Continue with guest checkout</a></span>
 
-                            <div className={ styles.actionContainer }>
-                                <SubmitButton
-                                    label={ this.props.isSigningIn ? `Signing in as ${ this.state.email }...` : 'Sign In' }
-                                    isLoading={ this.props.isSigningIn } />
-                            </div>
-                        </form>
+                     </div >
                     </Fragment>
                 } />
-            </div>
+
         );
     }
 

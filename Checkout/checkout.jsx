@@ -22,6 +22,7 @@ export default class Checkout extends React.PureComponent {
         this.state = {
             isPlacingOrder: false,
             showSignInPanel: false,
+            customerId: ''
         };
     }
 
@@ -38,6 +39,29 @@ export default class Checkout extends React.PureComponent {
             });
         });
     }
+    componentDidUpdate() {
+        const { data, errors, statuses } = this.state;
+        this.udpateCustomer()
+        this.updateShipping()
+    }
+
+    udpateCustomer() {
+        const filter = state => state.data.getCustomer();
+        this.service.subscribe(state => {
+            const customerId = state.data.getCustomer().id
+                this.setState({customerId: customerId})
+            console.log({showSignInPanel: this.state.showSignInPanel})
+        }, filter);
+    }
+
+    updateShipping() {
+        const filter = state => state.data.getShippingAddress();
+        
+        this.service.subscribe(state => {
+            console.log({'Shipping Address': state.statuses.isUpdatingShippingAddress()})
+        }, filter);
+     
+    }
 
     componentWillUnmount() {
         this.unsubscribe();
@@ -53,36 +77,36 @@ export default class Checkout extends React.PureComponent {
                 } />
             );
         }
-
-        if (this.state.showSignInPanel) {
-            return (
-                <Layout body={
-                    <LoginPanel
-                        errors={ errors.getSignInError() }
-                        isSigningIn={ statuses.isSigningIn() }
-                        onClick={ (customer) => this.service.signInCustomer(customer)
-                            .then(() => this.service.loadShippingOptions())
-                        }
-                        onClose={ () => this.setState({ showSignInPanel: false }) } />
-                } />
-            );
-        }
-
         return (
             <Layout body={
                 <Fragment>
                     <div className={ styles.body }>
                         <Panel body={
                             <form onSubmit={ (event) => this._submitOrder(event, data.getCustomer().isGuest) }>
+                                {!this.state.showSignInPanel &&
                                 <Customer
+                                customer={ data.getCustomer() }
+                                billingAddress={ data.getBillingAddress() }
+                                isSigningOut={ statuses.isSigningOut() }
+                                onClick={ async () => await this.service.signOutCustomer()
+                                    .then(() => this.service.loadShippingOptions())
+                                    .then((this.setState({ showSignInPanel: true })))
+                                    .then((customer) => this.setState({ customer })) }
+                                onChange={ (customer) => this.setState({ customer }) }
+                                onSignIn={ () => this.setState({ showSignInPanel: true }) } />
+                                }
+                                 {this.state.showSignInPanel &&
+                                    <LoginPanel
                                     customer={ data.getCustomer() }
                                     billingAddress={ data.getBillingAddress() }
-                                    isSigningOut={ statuses.isSigningOut() }
-                                    onClick={ () => this.service.signOutCustomer()
-                                        .then(() => this.service.loadShippingOptions()) }
-                                    onChange={ (customer) => this.setState({ customer }) }
-                                    onSignIn={ () => this.setState({ showSignInPanel: true }) } />
-
+                                        errors={ errors.getSignInError() }
+                                        onChange={async () => await service.clearError(errore)}
+                                        isSigningIn={ statuses.isSigningIn() }
+                                        onClick={ async (customer) => await this.service.signInCustomer(customer)
+                                            .then(() => this.setState({ showSignInPanel: false }))
+                                        }
+                                        onClose={ () => this.setState({ showSignInPanel: false }) } />
+                                }
                                 <Shipping
                                     customer={ data.getCustomer() }
                                     consignments={ data.getConsignments() }

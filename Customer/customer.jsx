@@ -9,7 +9,7 @@ export default class Customer extends React.PureComponent {
         super(props);
 
         this.state = {
-            email: '',
+            email: ''
         };
     }
 
@@ -55,7 +55,8 @@ export default class Customer extends React.PureComponent {
 
                                 <Button
                                     label={ this.props.isSigningOut ? `Signing out...` : 'Sign Out' }
-                                    onClick={ this.props.onClick } />
+                                    onClick={ this.props.onClick }
+                                     />
                             </div>
                         }
                     </Fragment>
